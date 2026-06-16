@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Divine Divas — Dance Collective</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #ff2d78; --pink-light: #ff6ba6;
+    --purple: #9b2dff; --purple-dark: #6a0dad;
+    --gold: #ffd700; --gold-light: #ffe566;
+    --black: #0a0a0a; --dark: #111; --dark-card: #1a1a1a;
+    --cream: #fff5f8; --white: #fff; --muted: #a0a0a0;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Inter',sans-serif; background:var(--black);
+    color:var(--white); overflow-x:hidden; -webkit-font-smoothing:antialiased;
+  }
+
+  /* LANGUAGE TOGGLE */
+  .vi { display:none !important; }
+  body.lang-vi .en { display:none !important; }
+  body.lang-vi .vi { display:inline !important; }
+  body.lang-vi .vi-block { display:block !important; }
+
+  .lang-toggle {
+    position:fixed; top:5.5rem; right:3rem; z-index:200;
+    display:flex; background:rgba(26,26,26,0.95);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:50px; overflow:hidden;
+    backdrop-filter:blur(12px); box-shadow:0 4px 20px rgba(0,0,0,0.5);
+  }
+  .lang-btn {
+    padding:0.5rem 1.2rem; font-size:0.75rem; font-weight:700;
+    letter-spacing:0.06em; border:none; cursor:pointer;
+    background:transparent; color:var(--muted);
+    transition:all 0.3s; font-family:'Inter',sans-serif;
+  }
+  .lang-btn.active {
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    color:var(--white);
+  }
+
+  /* NAV */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    padding:1.2rem 3rem; display:flex; align-items:center;
+    justify-content:space-between; backdrop-filter:blur(20px);
+    background:rgba(10,10,10,0.7);
+    border-bottom:1px solid rgba(255,255,255,0.05);
+  }
+  .logo {
+    font-family:'Playfair Display',serif; font-weight:900; font-size:1.6rem;
+    background:linear-gradient(135deg,var(--pink),var(--purple),var(--gold));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text; letter-spacing:-0.02em;
+  }
+  .nav-links { display:flex; gap:2.5rem; list-style:none; }
+  .nav-links a {
+    color:var(--muted); text-decoration:none; font-size:0.85rem;
+    font-weight:500; letter-spacing:0.08em; text-transform:uppercase;
+    transition:color 0.3s; position:relative;
+  }
+  .nav-links a::after {
+    content:''; position:absolute; bottom:-4px; left:0;
+    width:0; height:2px; background:var(--pink); transition:width 0.3s;
+  }
+  .nav-links a:hover { color:var(--white); }
+  .nav-links a:hover::after { width:100%; }
+  .nav-cta {
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    color:var(--white); border:none; padding:0.6rem 1.6rem;
+    border-radius:50px; font-size:0.8rem; font-weight:600;
+    letter-spacing:0.06em; text-transform:uppercase;
+    cursor:pointer; transition:transform 0.3s,box-shadow 0.3s;
+    text-decoration:none; font-family:'Inter',sans-serif;
+  }
+  .nav-cta:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(255,45,120,0.4); }
+
+  /* HERO */
+  .hero {
+    min-height:100vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center;
+    position:relative; padding:6rem 2rem 4rem; overflow:hidden;
+  }
+  .hero-bg { position:absolute; inset:0; z-index:0; }
+  .hero-bg::before {
+    content:''; position:absolute; top:-20%; left:-10%;
+    width:600px; height:600px;
+    background:radial-gradient(circle,rgba(255,45,120,0.15) 0%,transparent 70%);
+    animation:float1 8s ease-in-out infinite;
+  }
+  .hero-bg::after {
+    content:''; position:absolute; bottom:-10%; right:-10%;
+    width:500px; height:500px;
+    background:radial-gradient(circle,rgba(155,45,255,0.15) 0%,transparent 70%);
+    animation:float2 10s ease-in-out infinite;
+  }
+  @keyframes float1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,30px) scale(1.1)} }
+  @keyframes float2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-30px,-40px) scale(1.15)} }
+  .hero-tag {
+    z-index:1; display:inline-flex; align-items:center; gap:0.5rem;
+    padding:0.5rem 1.2rem; border:1px solid rgba(255,45,120,0.3);
+    border-radius:50px; font-size:0.75rem; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--pink-light);
+    margin-bottom:2rem; background:rgba(255,45,120,0.05);
+  }
+  .hero-tag .dot {
+    width:6px; height:6px; background:var(--pink);
+    border-radius:50%; animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.5)} }
+  .hero h1 {
+    z-index:1; font-family:'Playfair Display',serif;
+    font-weight:900; font-size:clamp(3.5rem,10vw,8rem);
+    line-height:0.95; margin-bottom:1.5rem; letter-spacing:-0.03em;
+  }
+  .hero h1 .line2 {
+    display:block;
+    background:linear-gradient(135deg,var(--pink),var(--gold));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .hero-sub {
+    z-index:1; font-size:clamp(1rem,2vw,1.25rem); color:var(--muted);
+    max-width:550px; line-height:1.7; margin-bottom:3rem; font-weight:300;
+  }
+  .hero-actions { z-index:1; display:flex; gap:1rem; align-items:center; }
+  .btn-primary {
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    color:var(--white); border:none; padding:1rem 2.5rem;
+    border-radius:50px; font-size:0.85rem; font-weight:600;
+    letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;
+    transition:transform 0.3s,box-shadow 0.3s; text-decoration:none;
+    display:inline-flex; align-items:center; gap:0.5rem;
+    font-family:'Inter',sans-serif;
+  }
+  .btn-primary:hover { transform:translateY(-3px); box-shadow:0 12px 40px rgba(255,45,120,0.5); }
+  .btn-outline {
+    background:transparent; color:var(--white);
+    border:1px solid rgba(255,255,255,0.2); padding:1rem 2.5rem;
+    border-radius:50px; font-size:0.85rem; font-weight:600;
+    letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;
+    transition:all 0.3s; text-decoration:none;
+    display:inline-flex; align-items:center; gap:0.5rem;
+    font-family:'Inter',sans-serif;
+  }
+  .btn-outline:hover { border-color:var(--pink); color:var(--pink); background:rgba(255,45,120,0.05); }
+  .hero-stats {
+    z-index:1; display:flex; gap:4rem; margin-top:5rem;
+    padding-top:3rem; border-top:1px solid rgba(255,255,255,0.06);
+  }
+  .stat h3 {
+    font-family:'Playfair Display',serif; font-size:2.5rem; font-weight:900;
+    background:linear-gradient(135deg,var(--white),var(--muted));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .stat p { font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:0.3rem; }
+
+  /* MARQUEE */
+  .marquee-section {
+    padding:2rem 0; overflow:hidden;
+    border-top:1px solid rgba(255,255,255,0.04);
+    border-bottom:1px solid rgba(255,255,255,0.04);
+    background:rgba(255,45,120,0.02);
+  }
+  .marquee-track { display:flex; width:max-content; animation:marquee 20s linear infinite; }
+  .marquee-item {
+    font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700;
+    white-space:nowrap; padding:0 3rem; color:rgba(255,255,255,0.08);
+    display:flex; align-items:center; gap:3rem;
+  }
+  .marquee-item .sep { width:6px; height:6px; background:var(--pink); border-radius:50%; flex-shrink:0; }
+  @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+  /* ABOUT */
+  .about {
+    padding:8rem 3rem; max-width:1200px; margin:0 auto;
+    display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center;
+  }
+  .about-visual {
+    position:relative; aspect-ratio:3/4;
+    background:linear-gradient(145deg,var(--dark-card),rgba(255,45,120,0.05));
+    border-radius:20px; overflow:hidden; display:flex;
+    align-items:center; justify-content:center;
+    border:1px solid rgba(255,255,255,0.05);
+  }
+  .about-visual .accent-ring {
+    position:absolute; width:300px; height:300px;
+    border:2px solid rgba(255,45,120,0.15);
+    border-radius:50%; animation:spin 15s linear infinite;
+  }
+  .about-visual .accent-ring:nth-child(2) {
+    width:200px; height:200px; border-color:rgba(155,45,255,0.15);
+    animation-direction:reverse; animation-duration:12s;
+  }
+  .about-visual .center-icon { font-size:4rem; z-index:1; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  .about-label { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.15em; color:var(--pink); margin-bottom:1rem; font-weight:600; }
+  .about h2 { font-family:'Playfair Display',serif; font-size:clamp(2rem,4vw,3rem); font-weight:900; line-height:1.15; margin-bottom:1.5rem; }
+  .about h2 em { font-style:normal; background:linear-gradient(135deg,var(--pink),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .about-text { color:var(--muted); font-size:1rem; line-height:1.8; margin-bottom:2rem; font-weight:300; }
+  .about-features { display:flex; flex-direction:column; gap:1rem; }
+  .feature-item { display:flex; align-items:center; gap:1rem; font-size:0.9rem; color:var(--white); }
+  .feature-item .check { width:28px; height:28px; background:rgba(255,45,120,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--pink); font-size:0.7rem; flex-shrink:0; }
+
+  /* TEAM */
+  .team { padding:8rem 3rem; max-width:1100px; margin:0 auto; text-align:center; }
+  .team-photo-wrapper {
+    position:relative; width:100%; max-width:700px; margin:0 auto 4rem;
+    border-radius:20px; overflow:hidden;
+    border:2px solid rgba(255,45,120,0.2);
+    box-shadow:0 20px 60px rgba(255,45,120,0.15);
+  }
+  .team-photo-wrapper img { width:100%; display:block; }
+  .bios-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.5rem; max-width:1000px; margin:0 auto; text-align:left; }
+  .bio-card {
+    background:var(--dark-card); border:1px solid rgba(255,255,255,0.08);
+    border-radius:20px; overflow:hidden; cursor:pointer;
+    transition:all 0.3s;
+  }
+  .bio-card:hover { border-color:var(--pink); transform:translateY(-3px); box-shadow:0 12px 40px rgba(255,45,120,0.12); }
+  .bio-card-header {
+    display:flex; align-items:center; gap:1rem;
+    padding:1.2rem 1.5rem;
+  }
+  .bio-card-header .bio-avatar {
+    width:56px; height:56px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.4rem; border:2px solid rgba(255,45,120,0.3);
+  }
+  .bio-card-header .bio-header-info { flex:1; }
+  .bio-card-header .bio-name { font-size:1.05rem; font-weight:700; color:var(--white); }
+  .bio-card-header .bio-role { font-size:0.72rem; color:var(--pink-light); text-transform:uppercase; letter-spacing:0.06em; }
+  .bio-card-header .bio-toggle { color:var(--pink); font-size:1.2rem; transition:transform 0.3s; flex-shrink:0; }
+  .bio-card.open .bio-toggle { transform:rotate(180deg); }
+  .bio-card-body {
+    max-height:0; overflow:hidden; transition:max-height 0.4s ease;
+  }
+  .bio-card.open .bio-card-body { max-height:2000px; }
+  .bio-card-content { padding:0 1.5rem 1.5rem; }
+  .bio-card-content .bio-section { margin-bottom:1rem; }
+  .bio-card-content .bio-section-label {
+    font-size:0.65rem; text-transform:uppercase; letter-spacing:0.12em;
+    color:var(--pink); font-weight:700; margin-bottom:0.4rem;
+  }
+  .bio-card-content .bio-section p { font-size:0.85rem; color:var(--muted); line-height:1.7; font-weight:300; }
+  .bio-card-content .bio-motto {
+    font-style:italic; color:var(--gold); font-size:0.85rem; line-height:1.6;
+    border-left:3px solid var(--pink); padding-left:1rem; margin-top:0.5rem;
+  }
+  .vi .bio-card-content .bio-section p { line-height:1.9; }
+
+  /* SECTIONS */
+  .section-label { text-align:center; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.15em; color:var(--pink); margin-bottom:1rem; font-weight:600; }
+  .section-title { text-align:center; font-family:'Playfair Display',serif; font-size:clamp(2rem,5vw,3.5rem); font-weight:900; margin-bottom:1rem; }
+  .section-subtitle { text-align:center; color:var(--muted); font-size:1rem; max-width:500px; margin:0 auto 4rem; font-weight:300; line-height:1.7; }
+
+  /* VIDEOS */
+  .videos-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:800px; margin:0 auto 3rem; }
+  .video-card {
+    border-radius:16px; overflow:hidden;
+    border:2px solid rgba(255,45,120,0.2);
+    box-shadow:0 12px 40px rgba(255,45,120,0.12);
+    background:var(--dark-card);
+    transition:transform 0.3s, border-color 0.3s;
+  }
+  .video-card:hover { transform:translateY(-3px); border-color:var(--pink); }
+  .video-wrapper { position:relative; width:100%; padding-top:56.25%; overflow:hidden; }
+  .video-label {
+    padding:0.8rem 1rem; font-size:0.8rem; color:var(--muted); text-align:center;
+    border-top:1px solid rgba(255,255,255,0.06);
+  }
+
+  /* GALLERY */
+  .gallery { padding:4rem 3rem 8rem; max-width:1300px; margin:0 auto; }
+  .gallery-grid { display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,280px); gap:1.2rem; }
+  .gallery-card {
+    border-radius:16px; overflow:hidden; position:relative;
+    cursor:pointer; transition:transform 0.4s cubic-bezier(0.2,0,0,1);
+    background:var(--dark-card); border:1px solid rgba(255,255,255,0.04);
+  }
+  .gallery-card:hover { transform:translateY(-6px); }
+  .gallery-card:nth-child(1) { grid-row:span 2; }
+  .gallery-card .card-bg { position:absolute; inset:0; background:linear-gradient(145deg,rgba(255,45,120,0.08),rgba(155,45,255,0.08)); transition:opacity 0.4s; }
+  .gallery-card:hover .card-bg { background:linear-gradient(145deg,rgba(255,45,120,0.15),rgba(155,45,255,0.15)); }
+  .gallery-card .card-content { position:absolute; bottom:0; left:0; right:0; padding:1.5rem; background:linear-gradient(to top,rgba(0,0,0,0.8),transparent); transform:translateY(10px); opacity:0; transition:all 0.4s; }
+  .gallery-card:hover .card-content { transform:translateY(0); opacity:1; }
+  .gallery-card .card-tag { font-size:0.65rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--pink-light); margin-bottom:0.4rem; font-weight:600; }
+  .gallery-card .card-title { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; }
+  .gallery-card .placeholder { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:3rem; opacity:0.3; }
+
+  /* SERVICES */
+  .services { padding:8rem 3rem; background:linear-gradient(180deg,rgba(255,45,120,0.02) 0%,transparent 100%); }
+  .services-grid { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; }
+  .service-card {
+    background:var(--dark-card); border:1px solid rgba(255,255,255,0.05);
+    border-radius:20px; padding:2.5rem; transition:all 0.4s;
+    position:relative; overflow:hidden;
+  }
+  .service-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--pink),var(--purple)); transform:scaleX(0); transition:transform 0.4s; transform-origin:left; }
+  .service-card:hover::before { transform:scaleX(1); }
+  .service-card:hover { border-color:rgba(255,45,120,0.15); transform:translateY(-4px); }
+  .service-icon { width:50px; height:50px; background:rgba(255,45,120,0.1); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin-bottom:1.5rem; }
+  .service-card h3 { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; margin-bottom:0.8rem; }
+  .service-card p { color:var(--muted); font-size:0.9rem; line-height:1.7; font-weight:300; }
+
+  /* CTA */
+  .cta { padding:8rem 3rem; text-align:center; position:relative; }
+  .cta-card {
+    max-width:800px; margin:0 auto;
+    background:linear-gradient(145deg,rgba(255,45,120,0.08),rgba(155,45,255,0.08));
+    border:1px solid rgba(255,45,120,0.15); border-radius:30px;
+    padding:5rem 4rem; position:relative; overflow:hidden;
+  }
+  .cta-card::before { content:''; position:absolute; top:-50%; right:-20%; width:400px; height:400px; background:radial-gradient(circle,rgba(255,45,120,0.1) 0%,transparent 70%); pointer-events:none; }
+  .cta-card h2 { font-family:'Playfair Display',serif; font-size:clamp(2rem,4vw,3rem); font-weight:900; margin-bottom:1rem; }
+  .cta-card p { color:var(--muted); font-size:1.05rem; max-width:450px; margin:0 auto 2.5rem; line-height:1.7; font-weight:300; }
+  .social-row { display:flex; gap:1rem; justify-content:center; margin-top:2rem; }
+  .social-btn {
+    width:48px; height:48px; border-radius:50%;
+    border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03);
+    color:var(--white); display:flex; align-items:center; justify-content:center;
+    font-size:1.1rem; cursor:pointer; transition:all 0.3s; text-decoration:none;
+  }
+  .social-btn:hover { border-color:var(--pink); background:rgba(255,45,120,0.1); transform:translateY(-3px); }
+
+  /* FOOTER */
+  footer { padding:3rem; text-align:center; border-top:1px solid rgba(255,255,255,0.04); }
+  footer p { color:var(--muted); font-size:0.8rem; font-weight:300; line-height:2; }
+  footer .footer-logo { font-family:'Playfair Display',serif; font-weight:900; font-size:1rem; background:linear-gradient(135deg,var(--pink),var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  footer .footer-sub { font-size:0.75rem; color:rgba(255,255,255,0.4); margin-top:0.3rem; }
+  footer .footer-credit { font-size:0.65rem; color:rgba(255,255,255,0.25); margin-top:0.5rem; }
+  footer .footer-parent { font-size:0.75rem; color:var(--pink-light); text-transform:uppercase; letter-spacing:0.1em; margin-top:0.5rem; }
+  footer .footer-credit { font-size:0.7rem; color:rgba(255,255,255,0.3); margin-top:0.3rem; }
+
+  /* RESPONSIVE */
+  @media (max-width:900px) {
+    nav { padding:1rem 1.5rem; }
+    .nav-links { display:none; }
+    .lang-toggle { right:1.5rem; top:4.8rem; }
+    .hero-stats { gap:2rem; flex-wrap:wrap; justify-content:center; }
+    .about { grid-template-columns:1fr; padding:5rem 1.5rem; gap:3rem; }
+    .team-photo-wrapper { max-width:90%; }
+    .gallery-grid { grid-template-columns:1fr 1fr; grid-template-rows:auto; }
+    .gallery-card:nth-child(1) { grid-row:span 1; }
+    .services-grid { grid-template-columns:1fr; }
+    .cta-card { padding:3rem 2rem; }
+  }
+  @media (max-width:600px) {
+    .hero-stats { flex-direction:column; gap:1.5rem; }
+    .gallery-grid { grid-template-columns:1fr; }
+    .videos-grid { grid-template-columns:1fr; }
+    .hero-actions { flex-direction:column; width:100%; }
+    .btn-primary,.btn-outline { width:100%; justify-content:center; }
+  }
+  @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:0.01ms!important; transition-duration:0.01ms!important; } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Divine Divas</div>
+  <ul class="nav-links">
+    <li><a href="#about"><span class="en">About</span><span class="vi">Giới thiệu</span></a></li>
+    <li><a href="#team"><span class="en">The Team</span><span class="vi">Thành viên</span></a></li>
+    <li><a href="#gallery"><span class="en">Gallery</span><span class="vi">Thư viện</span></a></li>
+  </ul>
+</nav>
+
+<!-- LANGUAGE TOGGLE -->
+<div class="lang-toggle">
+  <button class="lang-btn active" id="btnEN" onclick="switchLang('en')">EN</button>
+  <button class="lang-btn" id="btnVI" onclick="switchLang('vi')">VI</button>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-tag"><span class="dot"></span> <span class="en">TikTok Dance Collective</span><span class="vi">Nhóm Múa TikTok</span></div>
+  <h1>Divine<br><span class="line2">Divas</span></h1>
+  <p class="hero-sub">
+    <span class="en">Bold choreography. Unstoppable energy. A collective of dancers redefining what it means to move — one routine at a time.</span>
+    <span class="vi">Điệu múa đột phá. Năng lượng không thể dừng lại. Một tập hợp những vũ công định nghĩa lại ý nghĩa của chuyển động — từng tiết mục một.</span>
+  </p>
+  <div class="hero-actions">
+    <a href="#gallery" class="btn-primary">
+      <span>&#9654;</span>
+      <span class="en">See Our Moves</span><span class="vi">Xem Điệu Múa</span>
+    </a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><h3>500K+</h3><p><span class="en">TikTok Followers</span><span class="vi">Người theo dõi TikTok</span></p></div>
+    <div class="stat"><h3>10M+</h3><p><span class="en">Total Views</span><span class="vi">Lượt xem</span></p></div>
+    <div class="stat"><h3>200+</h3><p><span class="en">Routines Created</span><span class="vi">Tiết mục đã tạo</span></p></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marqueeTrack"></div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-visual">
+    <img src="divinedivaswow.jpg" alt="Divine Divas" style="width:100%;max-width:420px;border-radius:24px;border:3px solid rgba(255,45,120,0.25);box-shadow:0 20px 60px rgba(255,45,120,0.2);object-fit:cover;">
+    <div class="accent-ring"></div>
+    <div class="accent-ring"></div>
+  </div>
+  <div>
+    <div class="about-label"><span class="en">Who We Are</span><span class="vi">Chúng tôi là ai</span></div>
+    <h2>
+      <span class="en">Movement is our<br><em>language</em></span>
+      <span class="vi">Chuyển động là<br><em>ngôn ngữ</em></span>
+    </h2>
+    <p class="about-text">
+      <span class="en">Divine Divas is a TikTok-born dance collective that blends Afrobeat, hip-hop, dancehall, and contemporary movement into electrifying performances. Born from viral clips and forged on stage, we bring the same energy from your phone screen to live audiences.</span>
+      <span class="vi">Divine Divas là nhóm múa ra đời từ TikTok, kết hợp Afrobeat, hip-hop, dancehall và đương đại thành những tiết mục biểu diễn bùng nổ. Từ những clip viral đến sân khấu thực tế, chúng tôi mang năng lượng từ màn hình điện thoại đến khán giả trực tiếp.</span>
+    </p>
+    <div class="about-features">
+      <div class="feature-item"><div class="check">&#10003;</div><span><span class="en">Viral TikTok choreography &amp; trends</span><span class="vi">Biên đạo TikTok viral &amp; xu hướng</span></span></div>
+      <div class="feature-item"><div class="check">&#10003;</div><span><span class="en">Custom choreography for music videos</span><span class="vi">Biên đạo riêng cho MV nhạc</span></span></div>
+      <div class="feature-item"><div class="check">&#10003;</div><span><span class="en">Dance workshops &amp; masterclasses</span><span class="vi">Lớp học múa &amp; masterclass</span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team" id="team">
+  <div class="section-label"><span class="en">The Crew</span><span class="vi">Thành viên</span></div>
+  <div class="section-title"><span class="en">Meet the Divas</span><span class="vi">Gặp Gỡ Divine Divas</span></div>
+  <p class="section-subtitle">
+    <span class="en">The talented dancers behind the moves.</span>
+    <span class="vi">Những vũ công tài năng đằng sau những điệu múa.</span>
+  </p>
+  <div class="team-photo-wrapper">
+    <img src="divinedivas.jpg" alt="Divine Divas Dance Group">
+  </div>
+  <div class="bios-grid">
+
+    <!-- WAYNE -->
+    <div class="bio-card" onclick="this.classList.toggle('open')">
+      <div class="bio-card-header">
+        <div class="bio-avatar" style="background:rgba(100,180,255,0.15);">
+          <img src="wayne.jpg" alt="Wayne" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+        </div>
+        <div class="bio-header-info">
+          <div class="bio-name">Wayne</div>
+          <div class="bio-role"><span class="en">MC / Host / Big Brother</span><span class="vi">MC / Dẫn chương trình / Anh cả</span></div>
+        </div>
+        <div class="bio-toggle">&#9660;</div>
+      </div>
+      <div class="bio-card-body">
+        <div class="bio-card-content">
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Likes</span><span class="vi">Sở thích</span></div>
+            <p><span class="en">Singing, telling "lame" jokes to tease everyone</span><span class="vi">Ca hát, kể chuyện cười "nhạt" để trêu mọi người</span></p>
+          </div>
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Bio</span><span class="vi">Tiểu sử</span></div>
+            <p><span class="en">Wayne is a well-known event MC with a warm, deep voice and sharp improvisation skills. He joined Divine Divas to challenge himself and serve as the group's connector. Off-stage, he's the resident jokester, always pranking the Divas family to keep the laughter flowing. But the moment work begins — formations, stage setup, showtime — he switches to 100% serious mode. Wayne always handles sound checks, scripts, and protects his sisters from any backstage chaos.</span><span class="vi">Wayne là một MC sự kiện có tiếng, sở hữu chất giọng trầm ấm và khả năng ứng biến linh hoạt. Anh gia nhập Divine Divas vừa để thử thách bản thân, vừa đóng vai trò người kết nối. Ngày thường, Wayne là chúa hay đùa, thích bày trò trêu chọc cả gia đình Divas để không khí luôn ngập tiếng cười. Thế nhưng, cứ hễ bước vào công việc, ráp đội hình hay lên sân khấu, anh lập tức bật chế độ "nghiêm túc 100%". Wayne luôn là người kiểm tra âm thanh, kịch bản, và bảo vệ các em gái trước mọi sự cố hậu trường.</span></p>
+          </div>
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Standout Trait</span><span class="vi">Điểm ấn tượng</span></div>
+            <p><span class="en">His ability to fire off English and hype up the crowd is incredible, turning every performance into a professional live show thanks to his hosting talent.</span><span class="vi">Khả năng "bắn" tiếng anh và khuấy động phong trào cực đỉnh, biến mọi buổi biểu diễn của nhóm thành một liveshow chuyên nghiệp nhờ tài dẫn dắt của mình.</span></p>
+          </div>
+          <div class="bio-motto"><span class="en">"Joking is for stress relief — but when working, Divine Divas must be the perfect version!"</span><span class="vi">"Đùa giỡn là để giải tỏa áp lực, còn khi làm việc thì Divine Divas phải là phiên bản hoàn hảo nhất!"</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUZY -->
+    <div class="bio-card" onclick="this.classList.toggle('open')">
+      <div class="bio-card-header">
+        <div class="bio-avatar" style="background:rgba(255,45,120,0.15);">&#128131;</div>
+        <div class="bio-header-info">
+          <div class="bio-name">Suzy</div>
+          <div class="bio-role"><span class="en">Dancer / The Quiet Storm</span><span class="vi">Vũ công / Cơn bão thầm lặng</span></div>
+        </div>
+        <div class="bio-toggle">&#9660;</div>
+      </div>
+      <div class="bio-card-body">
+        <div class="bio-card-content">
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Bio</span><span class="vi">Tiểu sử</span></div>
+            <p><span class="en">Suzy holds the record for being the quietest member. She can sit silently through an entire practice, but don't mistake her for being aloof — she's actually hilarious with an "unleashed" laugh whenever the sisters play around. She's the "speak little, do much" type, always putting 100% focus and seriousness into dancing. After months, from someone who had never stood on stage, Suzy transformed with decisive moves, channeling all her pent-up energy from silence into every body movement.</span><span class="vi">Suzy giữ kỷ lục là thành viên ít nói nhất nhóm. Cô nàng có thể ngồi im lặng suốt cả buổi tập, nhưng đừng tưởng Suzy khó gần, thực chất cô cực kỳ vui tính và sở hữu điệu cười "thả ga" mỗi khi các chị em làm trò. Thuộc tuýp người "nói ít làm nhiều", Suzy luôn đặt 100% sự tập trung và nghiêm túc vào công việc nhảy. Sau nhiều tháng, từ một người chưa từng đứng trên sân khấu, Suzy đã lột xác với những bước nhảy dứt khoát, dồn hết mọi năng lượng dồn nén từ sự im lặng vào từng chuyển động cơ thể.</span></p>
+          </div>
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Cute Trait</span><span class="vi">Điểm đáng yêu</span></div>
+            <p><span class="en">During exhausting practices, while Naomi worries about sleeping and Astrid complains, Suzy quietly opens her phone to invite everyone for a few rounds of games to lift spirits. The moment she steps into formation, she instantly switches to warrior mode — incredibly captivating.</span><span class="vi">Giữa những buổi tập mệt mỏi, trong khi Naomi lo ngủ còn Astrid lo than thở, Suzy sẽ lẳng lặng mở máy rủ mọi người làm vài ván game để giải sầu. Cứ hễ đứng vào đội hình nhảy, cô nàng lập tức bật chế độ "chiến thần" cực kỳ cuốn hút.</span></p>
+          </div>
+          <div class="bio-motto"><span class="en">"I might not say anything, but my moves will speak for everything!"</span><span class="vi">"Em có thể không nói gì, nhưng bước nhảy của em sẽ nói thay tất cả!"</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ZIKA -->
+    <div class="bio-card" onclick="this.classList.toggle('open')">
+      <div class="bio-card-header">
+        <div class="bio-avatar" style="background:rgba(155,45,255,0.15);">&#128132;</div>
+        <div class="bio-header-info">
+          <div class="bio-name">Zika</div>
+          <div class="bio-role"><span class="en">Dancer / The Final Piece</span><span class="vi">Vũ công / Mảnh ghép cuối cùng</span></div>
+        </div>
+        <div class="bio-toggle">&#9660;</div>
+      </div>
+      <div class="bio-card-body">
+        <div class="bio-card-content">
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Likes</span><span class="vi">Sở thích</span></div>
+            <p><span class="en">Singing, dancing, shopping, and sleeping 24 hours a day</span><span class="vi">Ca hát, nhảy, mua sắm và có thể ngủ 24 tiếng mỗi ngày</span></p>
+          </div>
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Bio</span><span class="vi">Tiểu sử</span></div>
+            <p><span class="en">Zika is the final piece — the youngest who completed the 7-member lineup of Divine Divas! Her arrival brought an energy that's adorable, mischievous, and fiercely loyal all at once. Zika is the definition of a "chaotic little seed" with explosive energy. She has a mouth that runs at full capacity, talking nonstop from the moment she walks into practice until she leaves, always dropping bold statements that get the whole team piling on to tease her. Her fatal weakness is short-term memory — she forgets the next move right after learning the previous one, making her the team's exclusive "forgot-the-routine expert." But Zika has heroic blood. Whenever she sees anyone bullying her siblings or the team faces trouble, she's the first to charge into battle.</span><span class="vi">Zika – mảnh ghép cuối cùng – cô em út của nhóm, người khép lại đội hình 7 thành viên chính thức của Divine Divas! Sự xuất hiện của Zika mang đến một nguồn năng lượng vừa đáng yêu, vừa tinh nghịch, lại vô cùng nghĩa khí. Zika chính là định nghĩa của một "mầm non vô tri" mang năng lượng ồn ào hủy diệt. Cô nàng sở hữu chiếc miệng hoạt động hết công suất, nói không ngừng nghỉ từ lúc bước vào phòng tập cho đến khi ra về, chuyên phát ngôn những câu "mạnh miệng" để rồi bị cả nhóm đè ra trêu chọc. Điểm yếu chí mạng của cô nàng sau nhiều tháng tập luyện là bộ nhớ ngắn hạn – cứ học xong động tác trước là quên luôn động tác sau, biến cô thành "chuyên gia quên bài" độc quyền của nhóm. Thế nhưng, Zika lại sở hữu máu "anh hùng". Hễ thấy ai bắt nạt các anh chị, hoặc nhóm gặp rắc rối, cô út sẽ là người đầu tiên lao ra "chinh chiến" bất chấp đúng sai.</span></p>
+          </div>
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Cute Trait</span><span class="vi">Điểm đáng yêu</span></div>
+            <p><span class="en">Sometimes when the whole team is deeply focused, Zika suddenly screams at the top of her lungs for absolutely no reason. Despite her chaos, she adores her siblings and considers Divine Divas her second home. Behind the silly pranks and endless talking is a girl who always puts the team's feelings above everything else.</span><span class="vi">Nhiều lúc cả nhóm đang tập trung cao độ, Zika bỗng dưng hét lên một tiếng thật to không vì điều gì cả. Tuy vô tri nhưng Zika siêu thương các anh các chị và coi Divine Divas như ngôi nhà thứ hai của mình. Ẩn sau những trò hề vô tri và những tràng nói không ngừng là một cô bé luôn đặt tình cảm của nhóm lên trên hết.</span></p>
+          </div>
+          <div class="bio-motto"><span class="en">"I may be loud, but I love you all the most. Divine Divas is my home, and you guys are my family!"</span><span class="vi">"Em ồn ào nhưng thương các anh chị nhất đời. Divine Divas là nhà, các anh chị là gia đình của em!"</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AMY -->
+    <div class="bio-card" onclick="this.classList.toggle('open')">
+      <div class="bio-card-header">
+        <div class="bio-avatar" style="background:rgba(255,215,0,0.15);">&#128133;</div>
+        <div class="bio-header-info">
+          <div class="bio-name">Amy</div>
+          <div class="bio-role"><span class="en">Dancer / Big Sister / The Shield</span><span class="vi">Vũ công / Chị cả / Khiên chắn</span></div>
+        </div>
+        <div class="bio-toggle">&#9660;</div>
+      </div>
+      <div class="bio-card-body">
+        <div class="bio-card-content">
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Likes</span><span class="vi">Sở thích</span></div>
+            <p><span class="en">Watching movies, listening to music</span><span class="vi">Xem phim, nghe nhạc</span></p>
+          </div>
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Bio</span><span class="vi">Tiểu sử</span></div>
+            <p><span class="en">Anyone meeting Amy for the first time thinks she's cold, quiet, and hard to approach. But after just 10 minutes, everyone realizes she's extremely fun, adorable, and full of witty inside jokes. Recognized as the gentlest member who rarely raises her voice, Amy has incredibly strong protective instincts. She's always the first to step up, solve problems, and shield the team — the most stable emotional pillar Divine Divas has.</span><span class="vi">Ai mới nhìn Amy lần đầu cũng tưởng cô là người lạnh lùng, ít nói và khó gần. Thế nhưng, chỉ cần tiếp xúc quá 10 phút, tất cả sẽ nhận ra một Amy cực kỳ vui tính, dễ thương và có những câu đùa ngầm rất "mặn". Nhận diện là người hiền lành nhất nhóm, ít khi lớn tiếng với ai, nhưng Amy lại sở hữu bản năng bảo vệ cực kỳ mạnh mẽ. Cô luôn là người đứng ra giải quyết rắc rối, che chở và là chỗ dựa tinh thần vững chắc nhất cho cả đội.</span></p>
+          </div>
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Cute Trait</span><span class="vi">Điểm đáng yêu</span></div>
+            <p><span class="en">Her dance learning is a bit more "leisurely" than everyone else's. But every time Amy misses a beat or dances wrong, she turns it into a hilarious, charming moment that releases all the tension in the practice room.</span><span class="vi">Học vũ đạo và bắt nhịp có phần "thong thả" hơn mọi người. Thế nhưng, mỗi lần Amy nhảy sai hay trễ nhịp, cô lại tự biến nó thành một khoảnh khắc gây cười đầy duyên dáng để giải tỏa căng thẳng cho cả phòng tập.</span></p>
+          </div>
+          <div class="bio-motto"><span class="en">"You girls just keep shining and causing chaos — let your big sister handle the outside world!"</span><span class="vi">"Các em cứ việc tỏa sáng và quậy hết mình, thế giới ngoài kia cứ để chị gánh!"</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ASTRID -->
+    <div class="bio-card" onclick="this.classList.toggle('open')">
+      <div class="bio-card-header">
+        <div class="bio-avatar" style="background:rgba(255,45,120,0.1);">&#128130;</div>
+        <div class="bio-header-info">
+          <div class="bio-name">Astrid</div>
+          <div class="bio-role"><span class="en">Dancer / The Wildcard</span><span class="vi">Vũ công / Nhân tố đột phá</span></div>
+        </div>
+        <div class="bio-toggle">&#9660;</div>
+      </div>
+      <div class="bio-card-body">
+        <div class="bio-card-content">
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Likes</span><span class="vi">Sở thích</span></div>
+            <p><span class="en">Constantly changing makeup looks and hair colors, street style outfits, learning new random skills</span><span class="vi">Thay đổi layout makeup và màu tóc liên tục, phối đồ street style, học các tài lẻ mới</span></p>
+          </div>
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Bio</span><span class="vi">Tiểu sử</span></div>
+            <p><span class="en">At first glance, Astrid is easily misunderstood as "sharp-tongued and hard to approach" because of her fierce face and cool fashion sense. But she's actually carefree, super cute, and incredibly thoughtful. Her mouth is always saying "I'm so tired, I'm not practicing anymore!" but the moment the music plays, Astrid locks in at 200% energy with the most precise execution. She not only sings well but her dancing has improved dramatically, making her one of the best movers in the group.</span><span class="vi">Mới nhìn qua, Astrid dễ bị hiểu lầm là một cô nàng "đanh đá, khó gần" vì gương mặt sắc sảo và gu thời trang cực chất. Thế nhưng, cô lại là một người phóng khoáng, siêu dễ thương và cực kỳ tinh tế. Miệng thì lúc nào cũng than "Mệt quá, không tập nữa đâu!" nhưng cứ nhạc lên là Astrid lại tập trung 200% năng lượng, thực hiện động tác chuẩn xác nhất. Cô không chỉ sở hữu kỹ năng hát mà vũ đạo cũng thăng tiến vượt bậc, trở thành một trong những người nhảy đẹp nhất nhóm.</span></p>
+          </div>
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Cute Trait</span><span class="vi">Điểm đáng yêu</span></div>
+            <p><span class="en">She quietly helps everyone. Though Astrid complains a lot, she always looks out for and supports the people around her.</span><span class="vi">Rất hay giúp đỡ mọi người một cách thầm lặng. Tuy Astrid hay cằn nhằn nhưng luôn quan tâm giúp đỡ mọi người.</span></p>
+          </div>
+          <div class="bio-motto"><span class="en">"Complaining is my mouth's job — but dancing beautifully and singing well is a Diva's responsibility!"</span><span class="vi">"Than mệt là việc của cái miệng, còn nhảy đẹp và hát hay là trách nhiệm của một Diva!"</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMTINEE -->
+    <div class="bio-card" onclick="this.classList.toggle('open')">
+      <div class="bio-card-header">
+        <div class="bio-avatar" style="background:rgba(155,45,255,0.1);">&#10024;</div>
+        <div class="bio-header-info">
+          <div class="bio-name">Emtinee</div>
+          <div class="bio-role"><span class="en">Dancer / Lead Vocal / Baby Doll</span><span class="vi">Vũ công / Giọng ca chủ lực / Búp bê</span></div>
+        </div>
+        <div class="bio-toggle">&#9660;</div>
+      </div>
+      <div class="bio-card-body">
+        <div class="bio-card-content">
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Bio</span><span class="vi">Tiểu sử</span></div>
+            <p><span class="en">Emtinee is a true dancer and the most beautiful mover in Divine Divas. She possesses razor-sharp dance skills, an incredible singing voice, and highly original choreographic thinking. Emtinee always likes to show off her "annoying" side and appears tough and independent. But that prickly exterior is betrayed by an incredibly cute, natural voice. Even though she's not the youngest and always wants to prove her maturity, the fascinating contrast between her fierce look and her "baby doll" voice has made the whole team treat her like a baby to dote on and protect.</span><span class="vi">Emtinee là dancer thực thụ và là người nhảy đẹp nhất Divine Divas. Cô sở hữu kỹ năng vũ đạo sắc lẹm, hát cực hay và tư duy dựng bài đầy cá tính. Emtinee luôn thích thể hiện sự "đáng ghét", và tỏ ra mình là người vô cùng mạnh mẽ, độc lập. Thế nhưng, lớp vỏ bọc gai góc đó lại bị phản bội bởi một giọng nói siêu cấp dễ thương, tự nhiên. Dù không phải thành viên nhỏ tuổi nhất và luôn muốn chứng tỏ sự trưởng thành, nhưng chính sự đối lập thú vị giữa diện mạo cá tính và chất giọng "búp bê" đã khiến cả nhóm xem cô như một "em bé" để cưng chiều và bảo vệ.</span></p>
+          </div>
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Standout Trait</span><span class="vi">Điểm ấn tượng</span></div>
+            <p><span class="en">Throughout the group's journey, Emtinee has been the professional technical engine. She's incredibly bold in the practice room. Every time the music starts, she becomes a true dance warrior, carrying all the hardest routines and serving as the technical backbone for the entire team.</span><span class="vi">Trong suốt hành trình của nhóm, Emtinee chính là đầu tàu kỹ thuật chuyên nghiệp. Cô nàng cực kỳ bản lĩnh trên sàn tập. Mỗi khi nhạc nổi lên, cô là một chiến thần vũ đạo thực thụ, gánh toàn bộ những đoạn nhảy khó nhất và làm chỗ dựa chuyên môn cho cả đội.</span></p>
+          </div>
+          <div class="bio-motto"><span class="en">"Love dance in my own way: Not loud, but powerful enough to shake every stage."</span><span class="vi">"Yêu nhảy theo cách riêng: Không ồn ào nhưng đủ sức làm rung chuyển mọi sân khấu."</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAOMI -->
+    <div class="bio-card" onclick="this.classList.toggle('open')">
+      <div class="bio-card-header">
+        <div class="bio-avatar" style="background:rgba(255,215,0,0.1);">&#127775;</div>
+        <div class="bio-header-info">
+          <div class="bio-name">Naomi</div>
+          <div class="bio-role"><span class="en">Dancer / Happy Virus / The Glue</span><span class="vi">Vũ công / Virus hạnh phúc / Keo dính</span></div>
+        </div>
+        <div class="bio-toggle">&#9660;</div>
+      </div>
+      <div class="bio-card-body">
+        <div class="bio-card-content">
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Likes</span><span class="vi">Sở thích</span></div>
+            <p><span class="en">Sleeping everywhere (especially napping on sisters' shoulders during breaks), snacking, and playing pranks on everyone</span><span class="vi">Ngủ mọi lúc mọi nơi (đặc biệt là ngủ gục trên vai các chị em lúc giải lao), ăn vặt, và bày trò trêu chọc mọi người</span></p>
+          </div>
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Bio</span><span class="vi">Tiểu sử</span></div>
+            <p><span class="en">If Amy is the quiet support, Naomi is the group's loudspeaker. She talks endlessly, everywhere, and possesses a basket of quirky, hard-to-handle behaviors — like suddenly striking a meme pose mid-dance or belting out an opera note completely off-key. Even though she's the center of the group's teasing, Naomi is extremely perceptive. She's always the first to notice when someone is tired or feeling down, immediately running over to hug them and acting silly until they laugh again.</span><span class="vi">Nếu Amy là chỗ dựa thầm lặng thì Naomi chính là cái loa phát thanh của nhóm. Cô nàng nói luôn miệng, nói mọi lúc mọi nơi và sở hữu một rổ những hành động kỳ quặc, khó đỡ (như đang tập nhảy bỗng nhiên đứng tạo dáng meme hoặc cất giọng hát opera tone lệch). Dù là tâm điểm để cả nhóm chọc ghẹo, Naomi lại là người cực kỳ tinh tế. Cô luôn là người đầu tiên nhận ra khi có ai đó trong nhóm mệt mỏi hay xuống tinh thần, lập tức chạy đến ôm ấp, làm trò hề để người đó bật cười mới thôi.</span></p>
+          </div>
+          <div class="bio-section">
+            <div class="bio-section-label"><span class="en">Cute Trait</span><span class="vi">Điểm đáng yêu</span></div>
+            <p><span class="en">Her dance skills might fluctuate with her mood, but her ability to "sleep anywhere" right on the practice floor after exhausting sessions has become legendary in the group.</span><span class="vi">Khả năng vũ đạo có thể còn lên xuống tùy tâm trạng, nhưng khả năng "ngủ bất chấp" ngay trên sàn tập sau những giờ nhảy mệt nhoài của Naomi đã trở thành huyền thoại của nhóm.</span></p>
+          </div>
+          <div class="bio-motto"><span class="en">"A day without doing something crazy is a day wasted — dancing must be fun, that's what makes life fresh!"</span><span class="vi">"Một ngày không làm trò điên rồ là một ngày lãng phí, nhảy phải vui thì đời mới tươi!"</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery" id="gallery">
+  <div class="section-label"><span class="en">Highlights</span><span class="vi">Điểm Nổi Bật</span></div>
+  <div class="section-title"><span class="en">Our Latest Moves</span><span class="vi">Những Điệu Múa Mới Nhất</span></div>
+  <p class="section-subtitle">
+    <span class="en">From viral TikTok drops to creative collaborations — every routine tells a story.</span>
+    <span class="vi">Từ những clip viral trên TikTok đến những sáng tạo hợp tác — mỗi tiết mục đều kể một câu chuyện.</span>
+  </p>
+  <div class="videos-grid">
+    <div class="video-card">
+      <div class="video-wrapper">
+        <iframe src="https://drive.google.com/file/d/1KsWnEOVhKwpqbXxbj54agkx_31sY0ldm/preview" allow="autoplay" allowfullscreen style="border:none;width:100%;height:100%;position:absolute;top:0;left:0;"></iframe>
+      </div>
+      <div class="video-label"><span class="en">All 6 Divas — Group Dance</span><span class="vi">6 Divas — Nhảy nhóm</span></div>
+    </div>
+    <div class="video-card">
+      <div class="video-wrapper">
+        <iframe src="https://drive.google.com/file/d/1T5LNx75ukEAYFT81ZfrAZpbQvJoR2eMR/preview" allow="autoplay" allowfullscreen style="border:none;width:100%;height:100%;position:absolute;top:0;left:0;"></iframe>
+      </div>
+      <div class="video-label"><span class="en">Zika — Red Room Dance</span><span class="vi">Zika — Điệu nhảy Red Room</span></div>
+    </div>
+    <div class="video-card">
+      <div class="video-wrapper">
+        <iframe src="https://drive.google.com/file/d/13_rqsWIFfmw9oYg3R_8yUKvS7ZG4mlFL/preview" allow="autoplay" allowfullscreen style="border:none;width:100%;height:100%;position:absolute;top:0;left:0;"></iframe>
+      </div>
+      <div class="video-label"><span class="en">Champions of WOW Team Galaxy — Awards Ceremony</span><span class="vi">Đội vô địch WOW Team Galaxy — Lễ trao giải</span></div>
+    </div>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-card" style="grid-row:span 2">
+      <div class="card-bg"></div>
+      <div class="placeholder">&#127925;</div>
+      <div class="card-content">
+        <div class="card-tag"><span class="en">Trending Now</span><span class="vi">Đang thịnh hành</span></div>
+        <div class="card-title">Slaysian Royale Set</div>
+      </div>
+    </div>
+    <div class="gallery-card">
+      <div class="card-bg" style="background:linear-gradient(145deg,rgba(155,45,255,0.08),rgba(255,215,0,0.08))"></div>
+      <div class="placeholder">&#128131;</div>
+      <div class="card-content">
+        <div class="card-tag"><span class="en">Stage Performance</span><span class="vi">Biểu diễn sân khấu</span></div>
+        <div class="card-title">GOLDEN Routine</div>
+      </div>
+    </div>
+    <div class="gallery-card">
+      <div class="card-bg" style="background:linear-gradient(145deg,rgba(255,215,0,0.08),rgba(255,45,120,0.08))"></div>
+      <div class="placeholder">&#128132;</div>
+      <div class="card-content">
+        <div class="card-tag">Music Video</div>
+        <div class="card-title">Afro Fusion</div>
+      </div>
+    </div>
+    <div class="gallery-card">
+      <div class="card-bg" style="background:linear-gradient(145deg,rgba(255,45,120,0.06),rgba(155,45,255,0.12))"></div>
+      <div class="placeholder">&#127928;</div>
+      <div class="card-content">
+        <div class="card-tag">TikTok Viral</div>
+        <div class="card-title"><span class="en">Weekend Drop</span><span class="vi">Ra mắt cuối tuần</span></div>
+      </div>
+    </div>
+    <div class="gallery-card">
+      <div class="card-bg" style="background:linear-gradient(145deg,rgba(155,45,255,0.1),rgba(255,45,120,0.06))"></div>
+      <div class="placeholder">&#127917;</div>
+      <div class="card-content">
+        <div class="card-tag"><span class="en">Live Event</span><span class="vi">Sự kiện trực tiếp</span></div>
+        <div class="card-title"><span class="en">Viewing Party Set</span><span class="vi">Tiết mục xem chung</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOLLOW -->
+<section class="cta" id="follow">
+  <div class="cta-card">
+    <h2>
+      <span class="en">Follow<br>the Divas</span>
+      <span class="vi">Theo dõi<br>Divine Divas</span>
+    </h2>
+    <p>
+      <span class="en">Catch our latest routines, behind-the-scenes, and viral drops across every platform.</span>
+      <span class="vi">Xem những tiết mục mới nhất, hậu trường và clip viral trên mọi nền tảng.</span>
+    </p>
+    <div class="social-row">
+      <a href="https://tiktok.com" class="social-btn" title="TikTok" target="_blank">&#9835;</a>
+      <a href="https://instagram.com" class="social-btn" title="Instagram" target="_blank">&#9737;</a>
+      <a href="https://youtube.com" class="social-btn" title="YouTube" target="_blank">&#9654;</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p><span class="footer-logo">Divine Divas</span></p>
+  <p class="footer-sub"><span class="en">Parent Company — WOW Entertainment</span><span class="vi">Công ty mẹ — WOW Entertainment</span></p>
+  <p class="footer-credit"><span class="en">&copy; 2026 Divine Divas — All Rights Reserved</span><span class="vi">&copy; 2026 Divine Divas — Mọi quyền được bảo lưu</span></p>
+  <p class="footer-credit">Website by <strong>Turtle Logistics LLC</strong></p>
+</footer>
+
+<script>
+function switchLang(lang) {
+  if (lang === 'vi') {
+    document.body.classList.add('lang-vi');
+  } else {
+    document.body.classList.remove('lang-vi');
+  }
+  document.getElementById('btnEN').className = lang === 'en' ? 'lang-btn active' : 'lang-btn';
+  document.getElementById('btnVI').className = lang === 'vi' ? 'lang-btn active' : 'lang-btn';
+  document.title = lang === 'vi'
+    ? 'Divine Divas — Tập hợp Vũ công'
+    : 'Divine Divas — Dance Collective';
+  try { localStorage.setItem('divas-lang', lang); } catch(e) {}
+
+  // Rebuild marquee in correct language
+  var items = lang === 'vi'
+    ? ['Biên đạo','Afrobeat','Hip-Hop','Dancehall','Tiết mục viral','Đạo diễn sáng tạo','Đang thịnh hành','Mới nhất']
+    : ['Choreography','Afrobeat','Hip-Hop','Dancehall','Viral Routines','Creative Direction','Trending Now','New Drops'];
+  var html = '';
+  for (var r = 0; r < 2; r++) {
+    for (var i = 0; i < items.length; i++) {
+      html += '<div class="marquee-item">' + items[i] + ' <span class="sep"></span></div>';
+    }
+  }
+  document.getElementById('marqueeTrack').innerHTML = html;
+}
+
+// Init marquee and restore language
+(function() {
+  switchLang('en');
+  try {
+    var saved = localStorage.getItem('divas-lang');
+    if (saved === 'vi') switchLang('vi');
+  } catch(e) {}
+})();
+</script>
+
+</body>
+</html>
